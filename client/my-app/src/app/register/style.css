@@ -1,0 +1,14 @@
+.background {
+    background-image: url("/registerBackground.webp");
+    background-size: cover;       /* Ensures the image covers the container */
+    background-position: center;  /* Centers the image */
+    background-repeat: no-repeat; /* Prevents repeating the image */
+    height: 100vh;                /* Full viewport height */
+    margin: 0;                    /* Removes default margin */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;                 /* Text color */
+    font-size: 2rem;              /* Text size */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Optional text shadow */
+}

@@ -1,0 +1,20 @@
+.nav-list-item {
+    align-items: center;
+    display: inline-flex;
+    gap: 10px;
+    justify-content: center;
+    padding: 10px;
+    position: relative;
+  }
+  
+  .nav-list-item .list-item {
+    color: #7c8db0;
+    font-family: "Inter", Helvetica;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: normal;
+    margin-top: -1.00px;
+    position: relative;
+    width: fit-content;
+  }
