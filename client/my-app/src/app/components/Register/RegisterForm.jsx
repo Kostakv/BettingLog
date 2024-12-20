@@ -23,6 +23,8 @@ export const RegisterForm = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password == formData.rePassword){
   
     // Destructure the necessary fields
     const { username, email, password } = formData;
@@ -41,9 +43,23 @@ export const RegisterForm = () => {
       console.log("Server Response:", response.data); // Log the backend response
       setResponseMessage("Registration Successful!"); // Display success message
     } catch (error) {
-      console.error("Error submitting data:", error.response?.data || error.message);
-      setResponseMessage("Error: " + (error.response?.data?.message || "Something went wrong"));
+      // Safely extract the error message from the backend response
+      let errorMessage = "Something went wrong!";
+      if (error.response) {
+        errorMessage = error.response.data?.message || "An unknown error occurred";
+      } else if (error.request) {
+        errorMessage = "No response received from server";
+      } else {
+        errorMessage = error.message;
+      }
+    
+      // Display the extracted error message
+      setResponseMessage("Error: " + errorMessage);
     }
+  }
+  else {
+    console.log(`Error: passwords dont match`)
+  }
   };
   
 
