@@ -113,19 +113,26 @@ const remove = (req, res) => {
 };
 
 const getProfile = (req, res) => {
-  console.log('get profile controller ID')
+  console.log("Session at /profile:", req.session); // Debug the session content
+
   const { userId } = req.session;
-  
+
   if (!userId) {
     return res.status(401).send({ message: 'User is not logged in' });
   }
-  else {
-    UsersModel.getById(userId)
-      .then((user) => {
-        delete user.password
-        res.send({user})
-      });
-  }
+
+  UsersModel.getById(userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'User not found' });
+      }
+      delete user.password; // Remove sensitive data
+      res.status(200).send({ user });
+    })
+    .catch((error) => {
+      console.error("Error fetching profile:", error.message);
+      res.status(500).send({ message: "Error fetching user profile" });
+    });
 };
 
 module.exports = { create, getAll, getById, update, remove, getProfile };
