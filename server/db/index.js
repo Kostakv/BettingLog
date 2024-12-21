@@ -11,4 +11,4 @@ const dbConfig = {
 
 const db = new Client(dbConfig);
 
-module.exports = { db };
+module.exports = {db} ;
