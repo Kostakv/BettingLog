@@ -24,7 +24,8 @@ CREATE TABLE bookies (
 
 CREATE TABLE sports (
   id SERIAL PRIMARY KEY, 
-  name VARCHAR(100) UNIQUE NOT NULL
+  name VARCHAR(100) UNIQUE NOT NULL,
+  icon_url VARCHAR(255) -- Added column to store the sport's icon URL
 );
 
 CREATE TABLE user_profiles (
@@ -69,6 +70,7 @@ CREATE TABLE userBets (
   bettype VARCHAR(200) NOT NULL,
   odds DECIMAL(6,2) NOT NULL,
   amount DECIMAL(10,2) NOT NULL,
+  bet_units DECIMAL(5,2) DEFAULT NULL,
   result VARCHAR(200) NOT NULL DEFAULT 'pending',
   is_won BOOLEAN DEFAULT NULL,
   return DECIMAL(10,2),
@@ -79,6 +81,49 @@ CREATE TABLE userBets (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE OR REPLACE FUNCTION update_bet_units_and_balance()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Calculate bet units (percentage of the user's current balance)
+  NEW.bet_units := (NEW.amount / 
+    (SELECT current_balance 
+     FROM user_bookie_accounts 
+     WHERE user_id = NEW.user_id AND bookie_id = NEW.bookie_id)) * 100;
+
+  -- Deduct the bet amount from the user's current balance
+  UPDATE user_bookie_accounts
+  SET current_balance = current_balance - NEW.amount,
+      updated_at = CURRENT_TIMESTAMP
+  WHERE user_id = NEW.user_id AND bookie_id = NEW.bookie_id;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_userBets
+BEFORE INSERT ON userBets
+FOR EACH ROW
+EXECUTE FUNCTION update_bet_units_and_balance();
+
+CREATE OR REPLACE FUNCTION settle_bet()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.is_won THEN
+    UPDATE user_bookie_accounts
+    SET current_balance = current_balance + NEW.return,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE user_id = NEW.user_id AND bookie_id = NEW.bookie_id;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_update_userBets
+AFTER UPDATE OF is_won ON userBets
+FOR EACH ROW
+EXECUTE FUNCTION settle_bet();
 
 CREATE VIEW user_statistics AS
 SELECT
@@ -94,15 +139,6 @@ FROM user_profiles up
 LEFT JOIN userBets ub ON up.user_id = ub.user_id
 GROUP BY up.user_id;
 
-CREATE OR REPLACE FUNCTION update_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = CURRENT_TIMESTAMP;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
 
-CREATE TRIGGER set_updated_at
-BEFORE UPDATE ON userBets
-FOR EACH ROW
-EXECUTE FUNCTION update_timestamp();`
+
+`

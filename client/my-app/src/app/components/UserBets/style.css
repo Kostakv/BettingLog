@@ -1,0 +1,171 @@
+/* General Container */
+.bets-container {
+    width: 70%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    color: #333;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .bets-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .bets-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+  
+  .bets-search {
+    width: 150px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+  
+  .bets-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+  }
+  
+  .bets-table th,
+  .bets-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .bets-table th {
+    background-color: #f5f5f5;
+    color: #555;
+    font-weight: 600;
+  }
+  
+  .bets-table td {
+    vertical-align: middle;
+  }
+  
+  .bets-table tr:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+  
+  .bet-expanded {
+    background-color: #fafafa;
+  }
+  
+  .bet-details {
+    padding: 15px;
+    font-size: 14px;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  /* Grid layout for bet details */
+  .bet-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr; /* Left, Center, Right */
+    gap: 20px; /* Spacing between sections */
+    align-items: start;
+    margin-bottom: 15px;
+  }
+  
+  /* Left Section */
+  .bet-details-left {
+    text-align: left;
+  }
+  
+  /* Center Section */
+  .bet-details-center {
+    text-align: center;
+  }
+  
+  /* Right Section */
+  .bet-details-right {
+    text-align: right;
+  }
+  
+  /* Warning Message */
+  .warning-message {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  /* Bet Actions */
+  .bet-actions {
+    text-align: center;
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .delete-button {
+    padding: 8px 16px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .delete-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  .update-button {
+    padding: 8px 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .update-button:hover {
+    background-color: #388e3c;
+  }
+  
+  /* Adjust margins for paragraphs */
+  .bet-details p {
+    margin: 0.5em 0;
+  }
+  
+  .bet-details strong {
+    color: #333;
+  }
+  
+  /* Ensure buttons inside bet-details are consistent */
+  .bet-details .delete-button {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .bet-details .update-button {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .event-with-icon {
+    display: flex;
+    align-items: center;
+  }
+  
+  .sport-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 8px;
+    object-fit: contain;
+  }
