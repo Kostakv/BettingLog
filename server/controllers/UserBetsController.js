@@ -199,7 +199,43 @@ const UserBetsController = {
       console.error("Error fetching bets for user:", error.message);
       res.status(500).json({ message: "Error fetching bets", error: error.message });
     }
+  },
+
+  async getAnalyticsData(req, res) {
+    const { userId } = req.params;
+  
+    console.log(`Fetching analytics data for user ID: ${userId}`); // Debugging log
+  
+    try {
+      const query = `
+        SELECT 
+          uba.id AS account_id,
+          uba.initial_balance,
+          uba.current_balance,
+          b.id AS bookie_id,
+          b.name AS bookie_name,
+          b.logo_url,
+          b.website_url
+        FROM user_bookie_accounts uba
+        JOIN bookies b ON uba.bookie_id = b.id
+        WHERE uba.user_id = $1;
+      `;
+      const { rows } = await db.query(query, [userId]);
+  
+      // Return an empty array if no bookie accounts are found
+      if (rows.length === 0) {
+        console.log(`No bookie accounts found for user ID: ${userId}`);
+        return res.status(200).json({ accounts: [] });
+      }
+  
+      res.status(200).json({ accounts: rows });
+    } catch (error) {
+      console.error(`Error fetching analytics data for user ID: ${userId}`, error.message);
+      res.status(500).json({ message: "Error fetching analytics data", error: error.message });
+    }
   }
+
+  
 };
 
 module.exports = UserBetsController;

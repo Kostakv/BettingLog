@@ -10,6 +10,7 @@ import UserBetsList from "../components/UserBets/UserBetsList";
 export default function Analytics() {
   const [user, setUser] = useState(null);
   const [bets, setBets] = useState([]);
+  const [bookieAccounts, setBookieAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function Analytics() {
           { withCredentials: true }
         );
         setUser(profileData.user);
+        console.log("User profile data:", profileData.user);
 
         // Fetch user bets
         const { data: betsData } = await axios.get(
@@ -30,18 +32,18 @@ export default function Analytics() {
           { withCredentials: true }
         );
         setBets(betsData.bets);
+        console.log("User bets data:", betsData.bets);
+
+        // Fetch bookie accounts
+        const { data: accountsData } = await axios.get(
+          `http://localhost:7000/api/userBets/analytics/${profileData.user.id}`,
+          { withCredentials: true }
+        );
+        setBookieAccounts(accountsData.accounts);
+        console.log("Bookie accounts data:", accountsData.accounts);
       } catch (error) {
-        if (error.response?.status === 404) {
-          setErrorMessage(
-            "No bets found. Start placing your first bets!"
-          );
-        } else if (error.response?.status === 401) {
-          console.error("Unauthorized access, redirecting to login.");
-          router.push("/login");
-        } else {
-          console.error("Error fetching data:", error);
-          setErrorMessage("An error occurred while fetching data.");
-        }
+        console.error("Error fetching data:", error);
+        setErrorMessage("An error occurred while fetching analytics data.");
       } finally {
         setLoading(false);
       }

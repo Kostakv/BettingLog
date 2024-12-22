@@ -12,4 +12,7 @@ router.delete('/:id', UserBetsController.remove);
 // Custom Route: Get all bets for a specific user
 router.get('/bets/:userId', UserBetsController.getByUserId);
 
+// New Route: Get bookie accounts and related data for analytics
+router.get('/analytics/:userId', UserBetsController.getAnalyticsData);
+
 module.exports = router;
