@@ -2,9 +2,9 @@
 const { db } = require('../db');
 
 const register = async (username, email, password) => {
-  // Check if username or email already exists
+  // Check if username or email already exists (case-sensitive)
   const existingUser = await db.query(
-    'SELECT * FROM users WHERE username = $1 OR email = $2',
+    'SELECT * FROM users WHERE username = $1 COLLATE "C" OR email = $2 COLLATE "C"',
     [username, email]
   );
 
@@ -21,19 +21,24 @@ const register = async (username, email, password) => {
   return result.rows[0];
 };
 
-const login = username => {
-  return db
-    .query('SELECT * FROM users WHERE username = $1', [username])
-    .then(data => data.rows[0])
-    .catch(err => console.error(err.stack));
+const login = async (username) => {
+  const query = `
+    SELECT id, username, email, password, is_profile_set_up
+    FROM users
+    WHERE username = $1
+  `;
+  console.log("Executing AuthModel.login query:", query, "with username:", username);
+  const { rows } = await db.query(query, [username]);
+  console.log("AuthModel.login result:", rows[0]);
+  return rows[0];
 };
+
 
 const businessLogin = email => {
   return db
-    .query('SELECT * FROM businesses WHERE email = $1', [email])
+    .query('SELECT * FROM businesses WHERE email = $1 COLLATE "C"', [email])
     .then(data => data.rows[0])
     .catch(err => console.error(err.stack));
 };
-
 
 module.exports = { register, login, businessLogin };

@@ -169,13 +169,13 @@ const UserBetsController = {
 
   async getByUserId(req, res) {
     const { userId } = req.params;
-
+  
     try {
       const query = `
         SELECT 
           ub.*, 
           s.name AS sport_name, 
-          s.icon_url AS sport_icon, -- Include the sport icon URL
+          s.icon_url AS sport_icon, 
           b.name AS bookie_name, 
           b.logo_url AS bookie_logo, 
           b.website_url AS bookie_website, 
@@ -188,19 +188,18 @@ const UserBetsController = {
         WHERE ub.user_id = $1
         ORDER BY ub.bet_date DESC
       `;
-
       const { rows } = await db.query(query, [userId]);
-
+  
       if (rows.length === 0) {
-        return res.status(404).json({ message: "No bets found for this user" });
+        return res.status(404).json({ message: "No bets found for this user." });
       }
-
+  
       res.status(200).json({ bets: rows });
     } catch (error) {
-      console.error("Error fetching bets with units and balances:", error.message);
+      console.error("Error fetching bets for user:", error.message);
       res.status(500).json({ message: "Error fetching bets", error: error.message });
     }
-  },
+  }
 };
 
 module.exports = UserBetsController;

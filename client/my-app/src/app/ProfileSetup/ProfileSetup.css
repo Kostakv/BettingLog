@@ -1,0 +1,94 @@
+.profile-setup-container {
+    text-align: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .profile-setup-title {
+    font-size: 2.5rem;
+    color: #333;
+  }
+  
+  .profile-setup-subtitle {
+    font-size: 1rem;
+    color: #777;
+  }
+  
+  .profile-setup-form {
+    margin-top: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  
+  .form-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  
+  .form-input,
+  .form-select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .bookie-section {
+    margin-top: 30px;
+  }
+  
+  .bookie-section-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .bookie-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .add-button,
+  .remove-button,
+  .submit-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .remove-button {
+    background-color: #dc3545;
+  }
+  
+  .submit-button {
+    margin-top: 20px;
+    background-color: #28a745;
+    font-size: 1.2rem;
+  }
+  
+  .error-message {
+    color: #dc3545;
+    margin-top: 20px;
+  }
+  
+  .success-message {
+    color: #28a745;
+    margin-top: 20px;
+  }
+  

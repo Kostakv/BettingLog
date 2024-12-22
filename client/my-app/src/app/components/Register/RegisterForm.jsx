@@ -1,7 +1,8 @@
 "use client"; // For Next.js client component
 
 import React, { useState } from "react";
-import axios from "axios"; // Import axios
+import { useRouter } from "next/navigation"; // Import useRouter from Next.js navigation
+import axios from "axios";
 import "./style.css";
 
 export const RegisterForm = () => {
@@ -13,6 +14,7 @@ export const RegisterForm = () => {
   });
 
   const [responseMessage, setResponseMessage] = useState(""); // For showing success/error messages
+  const router = useRouter(); // Initialize the useRouter hook
 
   // Handle input changes
   const handleChange = (e) => {
@@ -24,44 +26,41 @@ export const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password == formData.rePassword){
-  
-    // Destructure the necessary fields
-    const { username, email, password } = formData;
-  
-    // Log the payload to verify the data being sent
-    console.log("Payload being sent:", { username, email, password });
-  
-    try {
-      // Send only username, email, and password to the backend
-      const response = await axios.post("http://localhost:7000/api/auth/register", {
-        username,
-        email,
-        password,
-      });
-  
-      console.log("Server Response:", response.data); // Log the backend response
-      setResponseMessage("Registration Successful!"); // Display success message
-    } catch (error) {
-      // Safely extract the error message from the backend response
-      let errorMessage = "Something went wrong!";
-      if (error.response) {
-        errorMessage = error.response.data?.message || "An unknown error occurred";
-      } else if (error.request) {
-        errorMessage = "No response received from server";
-      } else {
-        errorMessage = error.message;
+    if (formData.password === formData.rePassword) {
+      const { username, email, password } = formData;
+
+      console.log("Payload being sent:", { username, email, password });
+
+      try {
+        const response = await axios.post("http://localhost:7000/api/auth/register", {
+          username,
+          email,
+          password,
+        });
+
+        console.log("Server Response:", response.data); // Log the backend response
+        setResponseMessage("Registration Successful!"); // Display success message
+
+        // Redirect to login page after successful registration
+        setTimeout(() => {
+          router.push("/login"); // Use Next.js router to navigate
+        }, 1500); // Optional delay to show the success message
+      } catch (error) {
+        let errorMessage = "Something went wrong!";
+        if (error.response) {
+          errorMessage = error.response.data?.message || "An unknown error occurred";
+        } else if (error.request) {
+          errorMessage = "No response received from server";
+        } else {
+          errorMessage = error.message;
+        }
+
+        setResponseMessage("Error: " + errorMessage);
       }
-    
-      // Display the extracted error message
-      setResponseMessage("Error: " + errorMessage);
+    } else {
+      setResponseMessage("Error: Passwords do not match!");
     }
-  }
-  else {
-    console.log(`Error: passwords dont match`)
-  }
   };
-  
 
   return (
     <div className="modern-center-container">

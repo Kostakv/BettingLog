@@ -28,11 +28,17 @@ export default function LoginForm() {
       );
 
       // Handle successful response
+      const { isProfileSetUp } = response.data.user;
+
       setResponseMessage("Login Successful!");
       console.log("Login response:", response.data);
 
-      // Redirect to the profile page
-      router.push("/profile");
+      // Redirect based on is_profile_set_up
+      if (isProfileSetUp) {
+        router.push("/profile");
+      } else {
+        router.push("/ProfileSetup");
+      }
     } catch (error) {
       // Handle error response
       console.error("Error during login:", error.response?.data || error.message);
