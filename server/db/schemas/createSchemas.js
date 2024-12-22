@@ -8,11 +8,16 @@ DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY NOT NULL,
-  username VARCHAR(200) UNIQUE NOT NULL,
-  email VARCHAR(200) UNIQUE NOT NULL,
+  username VARCHAR(200) NOT NULL,
+  email VARCHAR(200) NOT NULL,
   password VARCHAR(200) NOT NULL,
-  is_admin BOOLEAN DEFAULT FALSE
+  is_admin BOOLEAN DEFAULT FALSE,
+  is_profile_set_up BOOLEAN DEFAULT FALSE
 );
+
+-- Add functional indexes for case-insensitive uniqueness
+CREATE UNIQUE INDEX unique_lower_username ON users (LOWER(username));
+CREATE UNIQUE INDEX unique_lower_email ON users (LOWER(email));
 
 CREATE TABLE bookies (
   id SERIAL PRIMARY KEY, 
@@ -30,13 +35,9 @@ CREATE TABLE sports (
 
 CREATE TABLE user_profiles (
   id SERIAL PRIMARY KEY, 
-  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
   location VARCHAR(255),
   favorite_sport VARCHAR(100),
-  preferred_bet_type VARCHAR(100),
-  profile_picture_url VARCHAR(255),
-  bio TEXT,
-  favorite_bookie_id INTEGER REFERENCES bookies(id) ON DELETE SET NULL,
   total_bets INTEGER DEFAULT 0,
   total_profit DECIMAL(10,2) DEFAULT 0.00,
   roi DECIMAL(5,2) DEFAULT 0.00,
@@ -51,7 +52,8 @@ CREATE TABLE user_bookie_accounts (
   initial_balance DECIMAL(10,2) NOT NULL,
   current_balance DECIMAL(10,2) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (user_id, bookie_id)
 );
 
 CREATE TABLE user_bookies (
@@ -138,7 +140,4 @@ SELECT
 FROM user_profiles up
 LEFT JOIN userBets ub ON up.user_id = ub.user_id
 GROUP BY up.user_id;
-
-
-
 `

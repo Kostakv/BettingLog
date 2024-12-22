@@ -10,6 +10,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [bets, setBets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -21,19 +22,26 @@ export default function ProfilePage() {
         );
         setUser(profileResponse.data.user);
 
-
-        const betsResponse = await axios.get(
-          `http://localhost:7000/api/userBets/bets/${profileResponse.data.user.id}`,
-          { withCredentials: true }
-        );
-        setBets(betsResponse.data.bets);
-        console.log('Fetch profile: ',profileResponse.data.user.id)
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        try {
+          const betsResponse = await axios.get(
+            `http://localhost:7000/api/userBets/bets/${profileResponse.data.user.id}`,
+            { withCredentials: true }
+          );
+          setBets(betsResponse.data.bets);
+          console.log("Bets fetched:", betsResponse.data.bets);
+        } catch (betsError) {
+          if (betsError.response?.status === 404) {
+            setErrorMessage("No bets found. Start placing your first bets!");
+          } else {
+            console.error("Error fetching bets:", betsError);
+            setErrorMessage("An error occurred while fetching bets.");
+          }
+        }
+      } catch (profileError) {
+        console.error("Error fetching profile:", profileError);
         router.push("/login");
       } finally {
         setLoading(false);
-        
       }
     };
 
@@ -64,8 +72,11 @@ export default function ProfilePage() {
         <div>
           <p><strong>Username:</strong> {user.username}</p>
           <p><strong>Email:</strong> {user.email}</p>
-          {console.log("Bets being passed to UserBetsList:", bets)}
-          <UserBetsList bets={bets} />
+          {errorMessage ? (
+            <p style={{ color: "red" }}>{errorMessage}</p>
+          ) : (
+            <UserBetsList bets={bets} />
+          )}
           {/* Logout Button */}
           <button
             onClick={handleLogout}

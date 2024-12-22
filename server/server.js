@@ -33,4 +33,10 @@ app.use(
 // ----------------------- ROUTES / ENDPOINTS
 app.use('/', routes);
 
+db.on('query', (query) => {
+  if (query.includes('users')) {
+    console.log("Database query affecting users table:", query);
+  }
+});
+
 module.exports = app;
