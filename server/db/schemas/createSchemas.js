@@ -1,10 +1,11 @@
 module.exports = `DROP TABLE IF EXISTS user_bookie_accounts CASCADE;
 DROP TABLE IF EXISTS user_bookies CASCADE;
 DROP TABLE IF EXISTS user_profiles CASCADE;
-DROP TABLE IF EXISTS userBets CASCADE;
+DROP TABLE IF EXISTS userbets CASCADE;
 DROP TABLE IF EXISTS sports CASCADE;
 DROP TABLE IF EXISTS bookies CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS userBets CASCADE;
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -62,7 +63,7 @@ CREATE TABLE user_bookies (
   bookie_id INTEGER REFERENCES bookies(id) ON DELETE CASCADE
 );
 
-CREATE TABLE userBets (
+CREATE TABLE userbets (
   id SERIAL PRIMARY KEY NOT NULL,
   user_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
   sport_id INTEGER NOT NULL REFERENCES sports(id),
@@ -77,6 +78,7 @@ CREATE TABLE userBets (
   is_won BOOLEAN DEFAULT NULL,
   return DECIMAL(10,2),
   profit_loss DECIMAL(10,2),
+  net_gain_loss DECIMAL(10,2), -- Added column to track net gain/loss
   bet_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   bookie_id INTEGER NOT NULL REFERENCES bookies(id) ON DELETE CASCADE,
   notes TEXT,
@@ -103,8 +105,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER before_insert_userBets
-BEFORE INSERT ON userBets
+CREATE TRIGGER before_insert_userbets
+BEFORE INSERT ON userbets
 FOR EACH ROW
 EXECUTE FUNCTION update_bet_units_and_balance();
 
@@ -122,10 +124,29 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER after_update_userBets
-AFTER UPDATE OF is_won ON userBets
+CREATE TRIGGER after_update_userbets
+AFTER UPDATE OF is_won ON userbets
 FOR EACH ROW
 EXECUTE FUNCTION settle_bet();
+
+-- Add trigger to calculate net_gain_loss
+CREATE OR REPLACE FUNCTION calculate_net_gain_loss()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.is_won THEN
+    NEW.net_gain_loss := NEW.return - NEW.amount;
+  ELSE
+    NEW.net_gain_loss := -NEW.amount;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_userbets_net_gain_loss
+BEFORE INSERT OR UPDATE ON userbets
+FOR EACH ROW
+EXECUTE FUNCTION calculate_net_gain_loss();
 
 CREATE VIEW user_statistics AS
 SELECT
@@ -138,6 +159,7 @@ SELECT
     ELSE 0
   END AS roi
 FROM user_profiles up
-LEFT JOIN userBets ub ON up.user_id = ub.user_id
+LEFT JOIN userbets ub ON up.user_id = ub.user_id
 GROUP BY up.user_id;
+
 `

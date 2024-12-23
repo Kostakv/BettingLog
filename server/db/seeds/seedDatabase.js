@@ -31,33 +31,15 @@ VALUES
 -- Insert user bookie accounts
 INSERT INTO user_bookie_accounts (user_id, bookie_id, initial_balance, current_balance)
 VALUES
-(1, 1, 1000.00, 900.00), -- Betway
-(1, 2, 1500.00, 1400.00), -- DraftKings
-(1, 3, 800.00, 700.00); -- FanDuel
+(1, 1, 1000.00, 1000.00);
 
--- Insert 20 userBets and adjust bookie balances
--- Example bets:
-
--- Bet 1
-INSERT INTO userBets (user_id, sport_id, sport_category, event_name, pick, bettype, odds, amount, bet_units, result, is_won, return, profit_loss, bet_date, bookie_id, notes)
-VALUES (1, 1, 'Premier League', 'Manchester United vs. Arsenal', 'Manchester United ML', 'Moneyline', 2.1, 50.00, 5.56, 'won', true, 105.00, 55.00, CURRENT_TIMESTAMP, 1, 'Great match for Manchester United.');
-UPDATE user_bookie_accounts SET current_balance = current_balance - 50.00 + 105.00 WHERE user_id = 1 AND bookie_id = 1;
-
--- Bet 2
-INSERT INTO userBets (user_id, sport_id, sport_category, event_name, pick, bettype, odds, amount, bet_units, result, is_won, return, profit_loss, bet_date, bookie_id, notes)
-VALUES (1, 2, 'NBA', 'Lakers vs. Celtics', 'Lakers +5', 'Spread Betting', 1.9, 80.00, 8.89, 'lost', false, 0.00, -80.00, CURRENT_TIMESTAMP, 2, 'Tough loss for the Lakers.');
-UPDATE user_bookie_accounts SET current_balance = current_balance - 80.00 WHERE user_id = 1 AND bookie_id = 2;
-
--- Repeat similar structure for Bets 3–20:
--- Ensure variety of sports, bookies, results (won/lost), and balance updates.
--- Each bet should update the corresponding bookie balance after the INSERT.
-
--- Final bet (Bet 20 example):
-INSERT INTO userBets (user_id, sport_id, sport_category, event_name, pick, bettype, odds, amount, bet_units, result, is_won, return, profit_loss, bet_date, bookie_id, notes)
-VALUES (1, 10, 'World Darts Championship', 'Player A vs. Player B', 'Player A ML', 'Moneyline', 1.75, 120.00, 10.00, 'won', true, 210.00, 90.00, CURRENT_TIMESTAMP, 3, 'Fantastic performance by Player A.');
-UPDATE user_bookie_accounts SET current_balance = current_balance - 120.00 + 210.00 WHERE user_id = 1 AND bookie_id = 3;
-
--- Ensure all 20 bets are included following this structure, with corresponding updates to bookie balances.
-
-
+-- Insert userbets with net_gain_loss
+INSERT INTO userbets (user_id, sport_id, bookie_id, event_name, pick, bettype, odds, amount, result, is_won, return, profit_loss, net_gain_loss) VALUES
+(1, 1, 1, 'Premier League Match Day', 'Manchester City', 'Moneyline', 1.80, 50.00, 'won', true, 90.00, 40.00, 40.00),
+(1, 1, 1, 'NBA Finals Game 4', 'Golden State Warriors', 'Spread -5.5', 2.00, 30.00, 'lost', false, 0.00, -30.00, -30.00),
+(1, 1, 1, 'Super Bowl LVIII', 'Kansas City Chiefs', 'Over 48.5', 1.90, 40.00, 'won', true, 76.00, 36.00, 36.00),
+(1, 1, 1, 'Wimbledon Final', 'Djokovic', 'Match Winner', 2.10, 20.00, 'won', true, 42.00, 22.00, 22.00),
+(1, 1, 1, 'Stanley Cup Game 7', 'Boston Bruins', 'Under 5.5 Goals', 1.75, 25.00, 'lost', false, 0.00, -25.00, -25.00);
 `;
+
+

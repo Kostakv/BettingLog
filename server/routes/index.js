@@ -20,7 +20,7 @@ router.use('/api/auth', AuthRoutes);
 router.use('/api/users', UsersRoutes);
 
 
-router.use('/api/userBets', UserBetsRoutes);
+router.use('/api/userbets', UserBetsRoutes);
 
 router.use('/api/user', ProfileRoutes);
 

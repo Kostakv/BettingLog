@@ -21,7 +21,7 @@ export default function UserBetsList({ bets }) {
   if (!bets || bets.length === 0) {
     return <p className="no-bets">No bets found.</p>;
   }
-
+  console.log("Bets Data:", bets);
   return (
     <div className="bets-container">
       <div className="bets-header">
@@ -88,6 +88,7 @@ export default function UserBetsList({ bets }) {
                         {/* Right Section */}
                         <div className="bet-details-right">
                           <p><strong>Unit Bet:</strong> {bet.units ? `${bet.units}%` : "N/A"}</p>
+                          <p><strong>Net Gain/Loss:</strong> ${bet.net_gain_loss ? Number(bet.net_gain_loss).toFixed(2) : "0.00"}</p>
                           <p><strong>Bookie Balance:</strong> ${bet.bookie_balance ? Number(bet.bookie_balance).toFixed(2) : "N/A"}</p>
                           {bet.units > 5 && (
                             <p className="warning-message">
