@@ -8,6 +8,8 @@ router.get('/', UserBetsController.getAll);
 router.get('/:id', UserBetsController.getById);
 router.put('/:id', UserBetsController.update);
 router.delete('/:id', UserBetsController.remove);
+router.get('/statistics/:userId', UserBetsController.getBookieStatistics);
+router.get('/userStatistics/:userId', UserBetsController.getUserStatistics);
 
 // Custom Route: Get all bets for a specific user
 router.get('/bets/:userId', UserBetsController.getByUserId);
