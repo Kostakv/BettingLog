@@ -54,7 +54,8 @@ const BookieAccountsList = ({ bookieAccounts, user }) => {
               <p><strong>Total Losses:</strong> {stat.total_losses}</p>
               <p><strong>Net Gain/Loss:</strong> ${stat.net_gain_loss ? Number(stat.net_gain_loss).toFixed(2) : "N/A"}</p>
               <p><strong>Win %:</strong> {stat.win_percentage}%</p>
-              <p><strong>ROI:</strong> {stat.roi}%</p>
+              <p><strong>ROI (Bets):</strong> {stat.roi}%</p>
+              <p><strong>ROI (Deposits):</strong> {stat.roi_deposits}%</p>
             </div>
             <div className="card-footer">
               <a

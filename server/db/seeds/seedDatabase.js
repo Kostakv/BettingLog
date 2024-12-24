@@ -31,15 +31,31 @@ VALUES
 -- Insert user bookie accounts
 INSERT INTO user_bookie_accounts (user_id, bookie_id, initial_balance, current_balance)
 VALUES
-(1, 1, 1000.00, 1000.00);
+(1, 1, 1000.00, 1000.00),
+(1, 2, 1000.00, 1000.00),
+(1, 3, 1000.00, 1000.00);
 
--- Insert userbets with net_gain_loss
-INSERT INTO userbets (user_id, sport_id, bookie_id, event_name, pick, bettype, odds, amount, result, is_won, return, profit_loss, net_gain_loss) VALUES
-(1, 1, 1, 'Premier League Match Day', 'Manchester City', 'Moneyline', 1.80, 50.00, 'won', true, 90.00, 40.00, 40.00),
-(1, 1, 1, 'NBA Finals Game 4', 'Golden State Warriors', 'Spread -5.5', 2.00, 30.00, 'lost', false, 0.00, -30.00, -30.00),
-(1, 1, 1, 'Super Bowl LVIII', 'Kansas City Chiefs', 'Over 48.5', 1.90, 40.00, 'won', true, 76.00, 36.00, 36.00),
-(1, 1, 1, 'Wimbledon Final', 'Djokovic', 'Match Winner', 2.10, 20.00, 'won', true, 42.00, 22.00, 22.00),
-(1, 1, 1, 'Stanley Cup Game 7', 'Boston Bruins', 'Under 5.5 Goals', 1.75, 25.00, 'lost', false, 0.00, -25.00, -25.00);
+INSERT INTO userbets (user_id, sport_id, sport_category, event_name, pick, bettype, odds, amount, result, is_won, return, profit_loss, bookie_id) VALUES
+(1, 1, 'Soccer', 'World Cup Final 2025', 'Brazil to Win', 'Moneyline', 2.50, 50.00, 'won', true, 125.00, 75.00, 1),
+(1, 2, 'Basketball', 'NBA Finals Game 5', 'Lakers +5.5', 'Spread', 1.90, 30.00, 'lost', false, 0.00, -30.00, 2),
+(1, 3, 'Football', 'Super Bowl 2025', 'Kansas City Chiefs vs. San Francisco 49ers - Over 49.5', 'Over/Under', 1.80, 40.00, 'won', true, 72.00, 32.00, 3),
+(1, 4, 'Tennis', 'Wimbledon Men''s Final', 'Roger Federer', 'Moneyline', 2.00, 25.00, 'won', true, 50.00, 25.00, 1),
+(1, 5, 'Hockey', 'Stanley Cup Finals', 'Edmonton Oilers -1.5', 'Puck Line', 2.20, 35.00, 'lost', false, 0.00, -35.00, 2),
+(1, 1, 'Soccer', 'Premier League Match', 'Liverpool vs. Man City - Draw', '3-Way Moneyline', 3.40, 20.00, 'won', true, 68.00, 48.00, 3),
+(1, 6, 'CS2', 'ESL Pro League Finals', 'Team Liquid', 'Moneyline', 1.75, 50.00, 'won', true, 87.50, 37.50, 1),
+(1, 7, 'Cricket', 'ICC World Cup', 'India vs. Australia - India', 'Match Winner', 1.60, 40.00, 'won', true, 64.00, 24.00, 2),
+(1, 8, 'Baseball', 'World Series', 'Yankees vs. Dodgers - Over 7.5 Runs', 'Over/Under', 1.85, 30.00, 'lost', false, 0.00, -30.00, 3),
+(1, 9, 'Volleyball', 'Olympic Finals', 'USA vs. Brazil - USA', 'Match Winner', 2.10, 25.00, 'won', true, 52.50, 27.50, 1),
+(1, 10, 'Darts', 'PDC World Championship', 'Michael van Gerwen', 'Moneyline', 2.30, 20.00, 'lost', false, 0.00, -20.00, 2),
+(1, 2, 'Basketball', 'NCAA March Madness', 'Duke -3.5', 'Spread', 1.95, 35.00, 'won', true, 68.25, 33.25, 3),
+(1, 3, 'Football', 'College Football Playoff', 'Alabama vs. Clemson - Under 55.5', 'Over/Under', 1.90, 30.00, 'won', true, 57.00, 27.00, 1),
+(1, 4, 'Tennis', 'US Open Women''s Final', 'Serena Williams', 'Moneyline', 1.80, 25.00, 'lost', false, 0.00, -25.00, 2),
+(1, 5, 'Hockey', 'NHL Regular Season', 'Toronto Maple Leafs vs. Boston Bruins - Over 5.5', 'Over/Under', 1.75, 40.00, 'won', true, 70.00, 30.00, 3),
+(1, 1, 'Soccer', 'Champions League', 'Real Madrid vs. Barcelona - Barcelona', 'Moneyline', 2.75, 30.00, 'lost', false, 0.00, -30.00, 1),
+(1, 6, 'CS2', 'DreamHack Open', 'Fnatic', 'Moneyline', 2.00, 50.00, 'won', true, 100.00, 50.00, 2),
+(1, 7, 'Cricket', 'T20 World Cup', 'England vs. Pakistan - England', 'Match Winner', 1.90, 45.00, 'won', true, 85.50, 40.50, 3),
+(1, 8, 'Baseball', 'ALCS', 'Astros vs. Rangers - Astros', 'Moneyline', 1.65, 35.00, 'won', true, 57.75, 22.75, 1),
+(1, 9, 'Volleyball', 'World Championships', 'Poland vs. Italy - Poland', 'Match Winner', 1.80, 20.00, 'lost', false, 0.00, -20.00, 2);
 `;
 
 

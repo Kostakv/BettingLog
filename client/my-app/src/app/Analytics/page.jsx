@@ -8,6 +8,7 @@ import axios from "axios";
 import UserBetsList from "../components/UserBets/UserBetsList";
 import BookieAccountsList from "../components/BookieAccounts/BookieAccountsList";
 import UserStatsCard from "../components/UserStatsCard/UserStatsCard";
+import UserBetStatistics from "../components/UserBetStatistics/UserBetStatistics";
 
 export default function Analytics() {
   const [user, setUser] = useState(null);
@@ -85,6 +86,7 @@ export default function Analytics() {
           ) : (
             <>
               <UserStatsCard userStats={userStats} />
+              <UserBetStatistics userId={user.id} />
               <BookieAccountsList bookieAccounts={bookieAccounts} user={user} />
               <UserBetsList bets={bets} />
             </>

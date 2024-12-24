@@ -10,6 +10,7 @@ router.put('/:id', UserBetsController.update);
 router.delete('/:id', UserBetsController.remove);
 router.get('/statistics/:userId', UserBetsController.getBookieStatistics);
 router.get('/userStatistics/:userId', UserBetsController.getUserStatistics);
+router.get('/userStatisticsDetailed/:userId', UserBetsController.getUserBetStatistics);
 
 // Custom Route: Get all bets for a specific user
 router.get('/bets/:userId', UserBetsController.getByUserId);
