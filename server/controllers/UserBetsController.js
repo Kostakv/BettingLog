@@ -282,38 +282,7 @@ console.log("With Values: ", [userId]); // Log the parameter values
   }
   ,
 
-  async getBookieStatistics(req, res) {
-  const { userId } = req.params;
 
-  try {
-    const query = `
-      SELECT 
-        b.name AS bookie_name,
-        COUNT(CASE WHEN ub.is_won = true THEN 1 END) AS total_wins,
-        COUNT(CASE WHEN ub.is_won = false THEN 1 END) AS total_losses,
-        ROUND(CASE 
-          WHEN COUNT(ub.id) > 0 THEN COUNT(CASE WHEN ub.is_won = true THEN 1 END)::NUMERIC * 100 / COUNT(ub.id)
-          ELSE 0 
-        END, 2) AS win_percentage,
-        ROUND(CASE 
-          WHEN SUM(ub.amount) > 0 THEN SUM(ub.profit_loss) * 100 / SUM(ub.amount)
-          ELSE 0 
-        END, 2) AS roi
-      FROM userbets ub
-      JOIN bookies b ON ub.bookie_id = b.id
-      WHERE ub.user_id = $1
-      GROUP BY b.name;
-    `;
-    console.log("Executing Query: ", query);
-console.log("With Values: ", [userId]); // Log the parameter values
-    const { rows } = await db.query(query, [userId]);
-    console.log("Query Result: ", rows);
-    res.status(200).json({ bookie_statistics: rows });
-  } catch (error) {
-    console.error('Error fetching bookie statistics:', error.message);
-    res.status(500).json({ message: 'Error fetching bookie statistics', error: error.message });
-  }
-},
 
 async getBookieStatistics(req, res) {
   const { userId } = req.params;
@@ -333,23 +302,80 @@ async getBookieStatistics(req, res) {
           WHEN SUM(ub.amount) > 0 THEN SUM(ub.profit_loss) * 100 / SUM(ub.amount)
           ELSE 0 
         END, 2) AS roi,
-        uba.initial_balance AS initial_deposited -- Add initial deposited for each bookie
+        ROUND(CASE 
+          WHEN uba.initial_balance > 0 THEN SUM(ub.profit_loss) * 100 / uba.initial_balance
+          ELSE 0 
+        END, 2) AS roi_deposits,
+        SUM(ub.profit_loss) AS net_gain_loss,
+        uba.initial_balance AS initial_deposited
       FROM userbets ub
       JOIN bookies b ON ub.bookie_id = b.id
       JOIN user_bookie_accounts uba ON ub.bookie_id = uba.bookie_id
       WHERE ub.user_id = $1
       GROUP BY b.name, uba.initial_balance;
     `;
+
     console.log("Executing Query: ", query);
-console.log("With Values: ", [userId]); // Log the parameter values
+    console.log("With Values: ", [userId]); // Log the parameter values
+
     const { rows } = await db.query(query, [userId]);
     console.log("Query Result: ", rows);
+
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ message: "No bookie statistics found for this user." });
+    }
+
     res.status(200).json({ bookie_statistics: rows });
   } catch (error) {
     console.error("Error fetching bookie statistics:", error.message);
     res.status(500).json({ message: "Error fetching bookie statistics", error: error.message });
   }
 },
+
+async getUserBetStatistics(req, res) {
+  try {
+    const userId = req.params.userId;
+
+    // SQL query to calculate statistics
+    const query = `
+      SELECT 
+        AVG(odds) AS averageOdds,
+        AVG(amount) AS averageBetInDollars,
+        AVG(COALESCE(bet_units, 0)) AS averageBetInUnits,
+        (SELECT bettype 
+         FROM userbets 
+         WHERE user_id = $1 
+         GROUP BY bettype 
+         ORDER BY COUNT(*) DESC 
+         LIMIT 1) AS mostUsedBetType
+      FROM userbets
+      WHERE user_id = $1;
+    `;
+
+    const { rows } = await db.query(query, [userId]);
+
+    if (rows.length === 0 || !rows[0].averageodds) {
+      return res.status(404).json({ message: "No betting statistics found for this user." });
+    }
+
+    const stats = rows[0];
+
+    // Send response
+    return res.status(200).json({
+      averageOdds: parseFloat(stats.averageodds).toFixed(2),
+      averageBetInDollars: parseFloat(stats.averagebetindollars).toFixed(2),
+      averageBetInUnits: parseFloat(stats.averagebetinunits).toFixed(2),
+      mostUsedBetType: stats.mostusedbettype,
+    });
+  } catch (error) {
+    console.error("Error calculating user bet statistics:", error.message);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+},
+
+
+
+
 
 async getUserStatistics(req, res) {
   const { userId } = req.params;
@@ -377,19 +403,20 @@ async getUserStatistics(req, res) {
         ) AS roi_based_on_bets, -- ROI based on total bet amount
         ROUND(
           CASE 
-            WHEN SUM(uba.initial_balance) > 0 THEN SUM(ub.profit_loss) * 100 / SUM(uba.initial_balance)
+            WHEN SUM(uba.initial_balance) > 0 THEN SUM(ub.profit_loss) * 100 / (SELECT SUM(initial_balance) FROM user_bookie_accounts WHERE user_id = $1)
             ELSE 0
           END, 2
         ) AS roi_based_on_deposits, -- ROI based on total deposited
-        SUM(DISTINCT uba.current_balance) AS total_balance,
-        SUM(DISTINCT uba.initial_balance) AS total_deposited
+        SUM(ub.profit_loss) AS total_profit,
+        (SELECT SUM(uba.initial_balance) FROM user_bookie_accounts uba WHERE uba.user_id = $1) + COALESCE(SUM(ub.profit_loss), 0) AS total_balance,
+        (SELECT SUM(initial_balance) FROM user_bookie_accounts WHERE user_id = $1) AS total_deposited
       FROM userbets ub
-      JOIN user_bookie_accounts uba ON ub.user_id = uba.user_id
+      JOIN user_bookie_accounts uba ON ub.bookie_id = uba.bookie_id
       WHERE ub.user_id = $1
         AND ub.is_won IS NOT NULL;
     `;
     console.log("Executing Query: ", query);
-console.log("With Values: ", [userId]); // Log the parameter values
+    console.log("getUserStatistics With Values: ", [userId]); // Log the parameter values
 
     const { rows } = await db.query(query, [userId]);
     console.log("Query Result: ", rows);
@@ -403,6 +430,14 @@ console.log("With Values: ", [userId]); // Log the parameter values
     res.status(500).json({ message: "Error fetching user statistics", error: error.message });
   }
 }
+
+
+
+
+
+
+
+
 
 
 
